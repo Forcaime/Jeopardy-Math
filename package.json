@@ -1,0 +1,14 @@
+{
+  "name": "Math-Jeopardy",
+  "version": "1.0.0",
+  "description": "A static web app for PDC Math Olympiad",
+  "scripts": {
+    "start": "npx serve public", 
+    "build": "echo 'No build step needed - static files ready!'",
+    "dev": "npx live-server public"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1",
+    "live-server": "^1.2.2"
+  }
+}
