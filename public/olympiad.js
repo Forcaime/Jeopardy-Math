@@ -1,8 +1,7 @@
 // Constants
 const CORRECT_TOKEN = 'OS2J8U';
 const SELECTION_TIME = 30;
-const QUESTION_TIME = 600
-; // 10 minutes
+const QUESTION_TIME = 600; // 10 minutes
 
 // State
 let state = {
@@ -47,8 +46,11 @@ function handleTimeUp() {
     stopTimer();
     
     if (state.stage === 'selection') {
-        // Auto-select hard difficulty
-        state.selectedDifficulty = 3;
+        // If no difficulty selected, auto-select hard difficulty
+        if (state.selectedDifficulty === null) {
+            state.selectedDifficulty = 3;
+        }
+        // Move to question stage
         state.stage = 'question';
         state.timeLeft = QUESTION_TIME;
         startTimer();
@@ -82,11 +84,8 @@ function handleLogin() {
 }
 
 function handleDifficultySelect(difficulty) {
+    // Only allow selection if not already selected
     state.selectedDifficulty = difficulty;
-    state.stage = 'question';
-    state.timeLeft = QUESTION_TIME;
-    stopTimer();
-    startTimer();
     render();
 }
 
@@ -99,9 +98,9 @@ function formatTime(seconds) {
 
 function getDifficultyInfo(diff) {
     const info = {
-        1: { label: 'Mudah', correct: '+5', wrong: '-1', color: 'bg-green-500' },
-        2: { label: 'Sedang', correct: '+8', wrong: '-2', color: 'bg-yellow-500' },
-        3: { label: 'Sulit', correct: '+15', wrong: '-4', color: 'bg-red-500' }
+        1: { label: 'Mudah', correct: '+5', wrong: '-1', color: 'bg-green-500', borderColor: 'border-green-500' },
+        2: { label: 'Sedang', correct: '+8', wrong: '-2', color: 'bg-yellow-500', borderColor: 'border-yellow-500' },
+        3: { label: 'Sulit', correct: '+15', wrong: '-4', color: 'bg-red-500', borderColor: 'border-red-500' }
     };
     return info[diff];
 }
@@ -114,10 +113,21 @@ function getCurrentQuestion() {
 
 // SVG Icons
 const icons = {
-    trophy: '<svg class="w-16 h-16 text-yellow-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v16h14V3M5 7h14m-7 4v8m-3-8l3 3m0 0l3-3"></path></svg>',
-    timer: '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
-    alert: '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>',
-    trophyLarge: '<svg class="w-24 h-24 text-yellow-500 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v16h14V3M5 7h14m-7 4v8m-3-8l3 3m0 0l3-3"></path></svg>'
+    trophy: `<svg class="w-16 h-16 text-yellow-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+    </svg>`,
+    timer: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>`,
+    alert: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+    </svg>`,
+    check: `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+    </svg>`,
+    trophyLarge: `<svg class="w-24 h-24 text-yellow-500 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+    </svg>`
 };
 
 // Render functions
@@ -158,6 +168,8 @@ function renderLogin() {
 }
 
 function renderSelection() {
+    const selectedInfo = state.selectedDifficulty !== null ? getDifficultyInfo(state.selectedDifficulty) : null;
+    
     return `
         <div class="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
             <div class="bg-white shadow-lg">
@@ -185,25 +197,49 @@ function renderSelection() {
                 <div class="text-center mb-12">
                     <h2 class="text-4xl font-bold text-white mb-4">Pilih Tingkat Kesulitan</h2>
                     <p class="text-xl text-gray-200">Anda memiliki 30 detik untuk memilih</p>
-                    <div class="mt-4 bg-yellow-500 text-gray-900 px-6 py-3 rounded-lg inline-flex items-center gap-2">
-                        ${icons.alert}
-                        <span class="font-semibold">Jika tidak memilih, otomatis akan memilih SULIT</span>
-                    </div>
+                    
+                    ${selectedInfo !== null ? `
+                        <div class="mt-6 bg-green-500 text-white px-8 py-4 rounded-xl inline-flex items-center gap-3 shadow-lg animate-pulse">
+                            ${icons.check}
+                            <span class="font-bold text-lg">Kesulitan ${selectedInfo.label} telah dipilih. Menunggu waktu habis...</span>
+                        </div>
+                    ` : `
+                        <div class="mt-6 bg-yellow-500 text-gray-900 px-8 py-4 rounded-xl inline-flex items-center gap-3 shadow-lg">
+                            ${icons.alert}
+                            <span class="font-bold text-lg">Jika tidak memilih, otomatis akan memilih SULIT</span>
+                        </div>
+                    `}
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     ${[1, 2, 3].map(diff => {
                         const info = getDifficultyInfo(diff);
+                        const isSelected = state.selectedDifficulty === diff;
                         return `
                             <button
                                 onclick="handleDifficultySelect(${diff})"
-                                class="${info.color} text-white rounded-2xl p-8 shadow-2xl hover:scale-105 transition-transform transform"
+                                class="${info.color} text-white rounded-2xl p-8 shadow-2xl transition-all transform hover:scale-105 ${isSelected ? 'scale-110 ring-8 ring-white' : ''}"
+                                style="position: relative;"
                             >
-                                <div class="text-3xl font-bold mb-4">${info.label}</div>
-                                <div class="space-y-2 text-lg">
-                                    <div>Benar: ${info.correct}</div>
-                                    <div>Salah: ${info.wrong}</div>
+                                ${isSelected ? `
+                                    <div style="position: absolute; top: -15px; right: -15px; background: white; border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+                                        <svg class="w-10 h-10 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </div>
+                                ` : ''}
+                                
+                                <div class="text-4xl font-bold mb-6">${info.label}</div>
+                                <div class="space-y-3 text-xl">
+                                    <div class="font-semibold">✓ Benar: ${info.correct}</div>
+                                    <div class="font-semibold">✗ Salah: ${info.wrong}</div>
                                 </div>
+                                
+                                ${isSelected ? `
+                                    <div class="mt-6 text-2xl font-bold bg-white bg-opacity-30 py-2 rounded-lg">
+                                        TERPILIH
+                                    </div>
+                                ` : ''}
                             </button>
                         `;
                     }).join('')}
@@ -245,7 +281,7 @@ function renderQuestion() {
             <div class="max-w-5xl mx-auto px-6 py-8">
                 <div class="bg-white rounded-2xl shadow-2xl p-8">
                     <div class="mb-6 flex justify-between items-center">
-                        <div class="px-4 py-2 rounded-lg ${diffInfo.color} text-white font-semibold">
+                        <div class="px-6 py-3 rounded-lg ${diffInfo.color} text-white font-bold text-lg shadow-md">
                             ${diffInfo.label}: Benar ${diffInfo.correct} | Salah ${diffInfo.wrong}
                         </div>
                     </div>
